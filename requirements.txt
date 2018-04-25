@@ -1,0 +1,4 @@
+Django==1.11
+slacker==0.9.42
+slacker-log-handler==1.2.0
+ebaysdk==2.1.5
