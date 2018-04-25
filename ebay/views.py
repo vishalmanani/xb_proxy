@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from ebaysdk.exception import ConnectionError
 from .ebay_api import API_MAP
+from ebaysdk import response as res
 
 slack_logger = logging.getLogger('django.request')
 
@@ -68,9 +69,12 @@ class EbayWebHook(View):
 
     def post(self, request):
         try:
-            data = request.body
+            xml = request.body
+            rdo = res.ResponseDataObject({'content': xml})
+            r = res.Response(rdo)
+            data = r.json()
 
-            notification_data = requests.post('http://127.0.0.1:8089/stock/notification/', data=data)
+            notification_data = requests.post('http://127.0.0.1:8089/webhook/notification/', data=data)
             notification_data = notification_data.json()
 
             if notification_data.get('status') == 200:
@@ -86,10 +90,11 @@ class EbayWebHook(View):
                     'message': 'error',
                 }
 
-        except Exception as error:
+        except Exception as e:
+            print(e)
             response = {
                 'status': 500,
                 'type': 'ERR',
                 'message': 'Internal Server Error',
             }
-        return JsonResponse(response)
+        return JsonResponse(response, status=response.get('status'))
