@@ -42,14 +42,19 @@ def get_orders(data):
 
 @register('ReviseInventoryStatus')
 def revise_inventory_status(data):
-    response = api.execute('ReviseInventoryStatus', {
-        'InventoryStatus': [
-            {
-                'ItemID': '222929471807',
-                'Quantity': '15',
-                # 'StartPrice': '12.99',
-                'SKU': 'A5003',
-            }
-        ]
-    })
-    return response
+
+    item_id = data.get('ItemID', None)
+    quantity = data.get('Quantity', None)
+    sku = data.get('SKU', None)
+
+    if item_id and quantity and sku:
+        response = api.execute('ReviseInventoryStatus', {
+            'InventoryStatus': [
+                {
+                    'ItemID': item_id,
+                    'Quantity': quantity,
+                    'SKU': sku,
+                }
+            ]
+        })
+        return response
