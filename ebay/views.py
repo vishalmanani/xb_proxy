@@ -22,6 +22,8 @@ class EbayAPI(View):
     def post(self, request):
         try:
             data = json.loads(request.body.decode("UTF-8"))
+            print("=======api========")
+            print(data)
             api_name = data.get('api')
             api_function = API_MAP.get(api_name, None)
 
@@ -70,10 +72,14 @@ class EbayWebHook(View):
     def post(self, request):
         try:
             xml = request.body
+            print("=======xml=======")
+            print(xml)
+            print("======end=xml=======")
             rdo = res.ResponseDataObject({'content': xml})
             r = res.Response(rdo)
             data = r.json()
-
+            print("===json")
+            print(data)
             notification_data = requests.post('http://xb-dev.us-east-2.elasticbeanstalk.com/webhook/notification/', data=data)
             notification_data = notification_data.json()
 
